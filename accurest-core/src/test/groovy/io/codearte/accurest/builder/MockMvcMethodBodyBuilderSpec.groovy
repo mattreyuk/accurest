@@ -1131,7 +1131,7 @@ World.'''"""
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('''assertThatJson(parsedJson).array("authorities").matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
+		test.contains('''assertThatJson(parsedJson).array("authorities").matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
@@ -1197,6 +1197,32 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatJson(parsedJson).array().contains("id").matches("[0-9]+")')
+	}
+
+	def "should do not escape regexp in tests"() {
+		given:
+		GroovyDsl contractDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				urlPath '/foos'
+			}
+			response {
+				status 200
+				body(
+						enabled: $(stub('true'), test(regex('^(true|false)$'))),
+				)
+				headers {
+					header('Content-Type': 'application/json')
+				}
+			}
+		}
+		MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.then(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		test.contains('assertThatJson(parsedJson).field("enabled").matches("^(true|false)$")')
 	}
 
 	@Issue('266')
