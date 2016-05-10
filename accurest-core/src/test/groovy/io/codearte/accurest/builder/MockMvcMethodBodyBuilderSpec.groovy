@@ -1232,6 +1232,37 @@ World.'''"""
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
+	def "should generate proper test code with array of primitives using #methodBuilderName"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath '/api/tags'
+				}
+				response {
+					status 200
+					body('''{"first_name":"existing",
+                                  "partners":[
+                                      { "role":"AGENT",
+                                        "payment_methods":[ "BANK", "CASH" ]
+                                      }
+                                   ]
+                                }''')
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("BANK").value()')
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+	}
+
 
 	GroovyDsl dslForDocs =
 			// tag::dsl_example[]
@@ -1278,4 +1309,4 @@ World.'''"""
 			}
 		}
 		// end::dsl_example[]
-	}
+}
