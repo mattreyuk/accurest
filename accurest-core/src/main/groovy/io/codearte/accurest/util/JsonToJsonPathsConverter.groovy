@@ -64,6 +64,11 @@ class JsonToJsonPathsConverter {
 			value.each {
 				traverseRecursively(Object, key.arrayField().contains(it), it, closure)
 			}
+		// JSON containing list of primitives { "partners":[ { "role":"AGENT", "payment_methods":[ "BANK", "CASH" ]	} ]
+		} else if (value instanceof List && listContainsOnlyPrimitives(value)) {
+			value.each {
+				traverseRecursively(Object, key.arrayField().isEqualTo(it), it, closure)
+			}
 		} else if (value instanceof List) {
 			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
 			value.each { def element ->

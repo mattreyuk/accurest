@@ -1241,13 +1241,14 @@ World.'''"""
 				}
 				response {
 					status 200
-					body('''{"first_name":"existing",
-                                  "partners":[
-                                      { "role":"AGENT",
-                                        "payment_methods":[ "BANK", "CASH" ]
-                                      }
-                                   ]
-                                }''')
+					body('''{
+							  "partners":[
+								  {
+									"payment_methods":[ "BANK", "CASH" ]
+								  }
+							   ]
+							}
+                                ''')
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1257,6 +1258,7 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("BANK").value()')
+			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("CASH").value()')
 		where:
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
