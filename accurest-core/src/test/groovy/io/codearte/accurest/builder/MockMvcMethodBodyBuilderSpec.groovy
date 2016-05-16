@@ -1273,7 +1273,7 @@ World.'''"""
 			}
 			response {
 				status 200
-        async()
+				async()
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1307,7 +1307,7 @@ World.'''"""
 								  }
 							   ]
 							}
-                                ''')
+				''')
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)

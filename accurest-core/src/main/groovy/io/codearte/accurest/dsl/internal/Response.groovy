@@ -14,7 +14,7 @@ class Response extends Common {
 	DslProperty delay
 	Headers headers
 	Body body
-  boolean async
+	boolean async
 
 	Response() {
 	}
@@ -54,10 +54,10 @@ class Response extends Common {
 	void fixedDelayMilliseconds(int timeInMilliseconds) {
 		this.delay = toDslProperty(timeInMilliseconds)
 	}
-	
+
 	public void async() {
-			 this.async = true
-	 }
+		this.async = true
+	}
 
 	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {
 		throw new IllegalStateException("Optional can be used only in the test side of the response!")
