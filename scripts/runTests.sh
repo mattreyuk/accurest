@@ -2,12 +2,14 @@
 
 set -o errexit
 
-mkdir -p build
-GRADLE_OUTPUT=`./gradlew cV --quiet`
-ACCUREST_VERSION=`echo ${GRADLE_OUTPUT##*:}`
-export ACCUREST_VERSION=${ACCUREST_VERSION}
+ROOT_FOLDER=`pwd`
+echo "Current folder is $ROOT_FOLDER"
 
-echo "Current accurest version is ${ACCUREST_VERSION}"
+mkdir -p build
+CONTRACT_VERIFIER_VERSION=1.0.0.BUILD-SNAPSHOT
+export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION}
+
+echo "Current Spring Cloud Contract Verifier version is ${CONTRACT_VERIFIER_VERSION}"
 
 cd build
 echo "Cloning samples"
@@ -19,3 +21,5 @@ echo "Running Gradle tests"
 
 echo "Running Maven tests"
 . ./runMavenTests.sh
+
+cd $ROOT_FOLDER
